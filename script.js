@@ -267,12 +267,5 @@
     });
   });
 
-  // ---------- ссылки-заглушки: адресов пока нет, клик никуда не ведёт ----------
-
-  each(document.querySelectorAll('a[data-stub]'), function(a){
-    a.title = 'ссылка появится позже';
-    a.addEventListener('click', function(e){ e.preventDefault(); });
-  });
-
   if (wide.matches) stage.focus({ preventScroll: true });
 })();
