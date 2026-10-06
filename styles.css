@@ -1,0 +1,603 @@
+/* =========================================================
+   mobile first: базовые стили — телефон, вертикальная колонка.
+   600px+      — планшет: шире поля, сетки в две колонки.
+   960px+ и ландшафт — горизонтальная лента листов, как холст в figma.
+   ========================================================= */
+
+:root{
+  --canvas:#E4E4E4;
+  --board:#FAFAF8;
+  --ink:#15171A;
+  --muted:#5E6366;
+  --hair:#9EA29F;
+  --pick:#1F2ED0;
+
+  --display:"Martian Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --mono:"DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --t-xs:11px;
+  --t-s:13px;
+  --t-m:15px;
+  --t-l:clamp(24px,3.4vw,40px);
+  --t-xl:clamp(34px,5.4vw,78px);
+
+  --gutter:16px;                 /* поле страницы */
+  --pad:22px;                    /* поле внутри листа */
+  --gap:clamp(28px,5vw,88px);    /* между листами в ленте */
+  --edge:clamp(20px,4vw,64px);   /* край ленты */
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html{background:var(--canvas);-webkit-text-size-adjust:100%}
+
+body{
+  font-family:var(--mono);
+  font-size:var(--t-m);
+  font-weight:300;
+  color:var(--ink);
+  background:var(--canvas);
+  -webkit-font-smoothing:antialiased;
+}
+
+::selection{background:var(--pick);color:var(--board)}
+
+a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--hair)}
+a:hover{color:var(--pick);border-bottom-color:var(--pick)}
+a:focus-visible{outline:2px solid var(--pick);outline-offset:3px;border-bottom-color:transparent}
+
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:var(--gutter);top:var(--gutter);z-index:9;background:var(--board);padding:8px 12px}
+
+/* ---------- лента: на телефоне обычная колонка ---------- */
+
+.stage:focus{outline:none}
+
+.track{
+  display:flex;
+  flex-direction:column;
+  gap:32px;
+  padding:28px var(--gutter) 92px;   /* снизу место под шкалу */
+}
+
+.panel{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  scroll-margin-top:16px;
+}
+
+/* подпись артборда */
+.tag{
+  font-size:var(--t-xs);
+  letter-spacing:.06em;
+  color:var(--muted);
+  transition:color .18s ease;
+}
+
+/* белый лист */
+.board{
+  position:relative;
+  background:var(--board);
+  padding:var(--pad);
+  outline:1px solid transparent;
+  outline-offset:0;
+  transition:outline-color .18s ease;
+}
+
+/* маркеры выделения, как у фрейма в figma */
+.hnd{
+  position:absolute;
+  width:7px;height:7px;
+  background:var(--board);
+  border:1px solid var(--pick);
+  opacity:0;
+  transition:opacity .18s ease;
+  pointer-events:none;
+}
+.hnd.tl{top:-4px;left:-4px}
+.hnd.tr{top:-4px;right:-4px}
+.hnd.bl{bottom:-4px;left:-4px}
+.hnd.br{bottom:-4px;right:-4px}
+
+.panel:focus-within .board{outline-color:var(--pick)}
+.panel:focus-within .hnd{opacity:1}
+.panel:focus-within .tag{color:var(--pick)}
+@media (hover:hover){
+  .panel:hover .board{outline-color:var(--pick)}
+  .panel:hover .hnd{opacity:1}
+  .panel:hover .tag{color:var(--pick)}
+}
+
+/* ---------- общая типографика листов ---------- */
+
+.head{
+  font-family:var(--display);
+  font-variation-settings:"wdth" 87.5;
+  font-size:clamp(20px,2.4vw,30px);
+  font-weight:500;
+  line-height:1.12;
+  letter-spacing:-.02em;
+  margin-bottom:22px;
+}
+
+/* только абзацы самого листа: подписи в списках и .sign живут по своим правилам */
+.essay .board > p:not(.sign){
+  font-size:var(--t-m);
+  line-height:1.74;
+  margin-bottom:16px;
+}
+
+/* пары «подпись — значение»: в кейсах, «обо мне» и подвале */
+.meta{
+  margin-top:20px;
+  padding-top:14px;
+  border-top:1px solid var(--hair);
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:5px clamp(14px,1.6vw,26px);
+  font-size:var(--t-xs);
+  line-height:1.5;
+  color:var(--muted);
+}
+.meta dt{color:var(--hair)}
+.meta dd{color:var(--muted)}
+
+.sign{
+  margin-top:28px;
+  font-size:var(--t-xs);
+  color:var(--muted);
+  line-height:1.8;
+}
+
+/* кнопки */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 14px;
+  font:inherit;
+  font-size:var(--t-s);
+  line-height:1;
+  color:var(--board);
+  background:var(--ink);
+  border:1px solid var(--ink);
+  cursor:pointer;
+  transition:background-color .18s ease,border-color .18s ease,color .18s ease;
+}
+.btn-quiet{
+  color:var(--ink);
+  background:transparent;
+  border-color:var(--hair);
+}
+.btn:hover{color:var(--board);background:var(--pick);border-color:var(--pick)}
+.btn:focus-visible{outline:2px solid var(--pick);outline-offset:3px;border-color:var(--pick)}
+.btn-s{padding:6px 10px;font-size:var(--t-xs)}
+
+/* ---------- титул ---------- */
+
+.name{
+  font-family:var(--display);
+  font-variation-settings:"wdth" 87.5;
+  font-size:var(--t-xl);
+  font-weight:500;
+  line-height:.94;
+  letter-spacing:-.035em;
+}
+
+/* на телефоне подзаголовок идёт во всю ширину, поэтому фото только рядом с именем */
+.portrait{
+  position:absolute;
+  top:var(--pad);
+  right:var(--pad);
+  height:calc(2 * .94 * var(--t-xl) + 16px);
+  width:auto;
+  aspect-ratio:561/749;
+  object-fit:cover;
+  border-radius:6px;
+  display:block;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+.claim{
+  font-family:var(--display);
+  font-variation-settings:"wdth" 87.5;
+  font-size:var(--t-l);
+  font-weight:300;
+  line-height:1.34;
+  letter-spacing:-.02em;
+  margin-top:clamp(26px,3.4vw,54px);
+}
+
+.facts{
+  margin-top:clamp(30px,4vw,60px);
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px clamp(28px,4vw,64px);
+  font-size:var(--t-s);
+  color:var(--muted);
+}
+
+/* ---------- кейсы: вертикальные карточки ---------- */
+
+.works-head{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin-bottom:26px;
+}
+.works-head .head{margin-bottom:0}
+
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.works-count{
+  font-size:var(--t-xs);
+  color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+
+/* на телефоне — одна колонка карточек */
+.cards{
+  display:grid;
+  gap:36px;
+}
+
+.card{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+.card[hidden]{display:none}
+
+/* обложки всех кейсов в одной пропорции 4:3 — карточки выходят одинаковыми */
+.cover{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  border-radius:12px;
+  background:var(--canvas);
+  transition:transform .25s ease;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+@media (hover:hover){
+  .card:hover .cover{transform:translateY(-4px)}
+  .card:hover .card-title{color:var(--pick)}
+}
+
+.kind{
+  margin-top:16px;
+  font-size:var(--t-xs);
+  letter-spacing:.04em;
+  color:var(--muted);
+}
+
+.card-title{
+  font-family:var(--display);
+  font-variation-settings:"wdth" 87.5;
+  font-size:clamp(18px,1.7vw,22px);
+  font-weight:500;
+  line-height:1.15;
+  letter-spacing:-.02em;
+  margin-top:6px;
+  transition:color .18s ease;
+}
+
+.note{
+  font-size:var(--t-s);
+  line-height:1.62;
+  margin-top:8px;
+}
+
+/* кнопка прижата к низу карточки — в ряду они стоят на одной линии */
+.acts{
+  margin-top:auto;
+  padding-top:16px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+/* ---------- образование ---------- */
+
+.entries{list-style:none}
+.entries li{
+  display:grid;
+  gap:4px;
+  padding:14px 0;
+  border-top:1px solid var(--hair);
+}
+.entries li:last-child{border-bottom:1px solid var(--hair)}
+.when{
+  font-size:var(--t-xs);
+  color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+.what{
+  font-size:var(--t-m);
+  font-weight:400;
+}
+.desc{
+  font-size:var(--t-s);
+  line-height:1.6;
+  color:var(--muted);
+}
+
+/* ---------- навыки ---------- */
+
+.groups{display:grid;gap:22px}
+.label{
+  font-size:var(--t-xs);
+  font-weight:400;
+  letter-spacing:.06em;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.chips{
+  list-style:none;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+/* плашки навыков и кнопки фильтра — один и тот же элемент системы */
+.chips li,
+.chip{
+  font-family:inherit;
+  font-weight:300;
+  font-size:var(--t-s);
+  line-height:1;
+  padding:7px 10px;
+  color:var(--ink);
+  background:none;
+  border:1px solid var(--hair);
+}
+.chip{
+  cursor:pointer;
+  transition:background-color .18s ease,border-color .18s ease,color .18s ease;
+}
+.chip:hover{color:var(--pick);border-color:var(--pick)}
+.chip[aria-pressed="true"]{color:var(--board);background:var(--ink);border-color:var(--ink)}
+.chip[aria-pressed="true"]:hover{background:var(--pick);border-color:var(--pick)}
+.chip:focus-visible{outline:2px solid var(--pick);outline-offset:3px}
+
+/* ---------- контакты ---------- */
+
+.rows{list-style:none;margin-top:8px}
+.rows li{
+  padding:13px 0;
+  border-bottom:1px solid var(--hair);
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:8px 24px;
+  align-items:center;
+  font-size:var(--t-s);
+}
+.rows .aside{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:var(--muted);
+  font-size:var(--t-xs);
+}
+
+/* ---------- подвал ---------- */
+
+.colophon{font-size:var(--t-s);line-height:1.6;grid-template-columns:1fr;gap:4px}
+.colophon dt{font-size:var(--t-xs);margin-top:10px}
+.colophon dt:first-child{margin-top:0}
+.colophon dd{color:var(--ink)}
+.js-list{list-style:none}
+.js-list li{padding-left:1.4em;text-indent:-1.4em}
+.js-list li::before{content:"— ";color:var(--hair)}
+
+/* ---------- фиксированная метка (только в ленте) ---------- */
+
+.mark{
+  display:none;
+  position:fixed;
+  top:var(--edge);
+  left:var(--edge);
+  z-index:5;
+  font-size:var(--t-s);
+  color:var(--ink);
+  opacity:0;
+  transform:translateY(-6px);
+  transition:opacity .4s ease,transform .4s ease;
+  pointer-events:none;
+}
+.mark.on{opacity:1;transform:none}
+
+/* ---------- шкала: на телефоне — панель внизу экрана ---------- */
+
+.scrub{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+  background:rgba(228,228,228,.94);
+}
+
+.rail{
+  position:relative;
+  flex:1;
+  height:18px;
+  display:flex;
+  align-items:center;
+}
+.rail::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;
+  height:1px;
+  background:var(--hair);
+}
+.fill{
+  position:absolute;
+  left:0;
+  height:1px;
+  background:var(--ink);
+  width:0;
+}
+
+.tick{
+  position:absolute;
+  width:16px;height:18px;
+  padding:0;
+  background:none;
+  border:0;
+  cursor:pointer;
+  transform:translateX(-8px);
+}
+.tick::after{
+  content:"";
+  position:absolute;
+  left:50%;top:5px;
+  width:1px;height:8px;
+  background:var(--hair);
+  transform:translateX(-50%);
+}
+.tick[aria-current="true"]::after{background:var(--pick);height:14px;top:2px;width:2px}
+.tick:hover::after{background:var(--ink)}
+.tick:focus-visible{outline:2px solid var(--pick);outline-offset:2px}
+
+.count{
+  font-size:var(--t-xs);
+  color:var(--muted);
+  min-width:7ch;
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+
+/* =========================================================
+   планшет
+   ========================================================= */
+
+@media (min-width:600px){
+  :root{--gutter:32px;--pad:32px}
+
+  .track{align-items:center;gap:44px}
+  .panel{width:min(100%,760px)}
+
+  .entries li{grid-template-columns:8.5em 1fr;gap:20px;align-items:baseline}
+  .groups{grid-template-columns:1fr 1fr;gap:26px 32px}
+  .colophon{grid-template-columns:auto 1fr;gap:8px 24px}
+  .colophon dt{margin-top:0}
+
+  .cards{grid-template-columns:1fr 1fr;gap:44px 24px}
+}
+
+/* =========================================================
+   широкий экран в ландшафте: горизонтальная лента
+   ========================================================= */
+
+@media (min-width:960px) and (orientation:landscape){
+  :root{--pad:clamp(22px,3vw,46px)}
+
+  html,body{height:100%;overflow:hidden}
+
+  .stage{
+    position:fixed;
+    inset:0;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:none;
+    cursor:grab;
+  }
+  .stage::-webkit-scrollbar{display:none}
+  .stage.is-dragging{cursor:grabbing}
+
+  .track{
+    flex-direction:row;
+    align-items:center;
+    height:100%;
+    width:max-content;
+    gap:var(--gap);
+    padding:0 var(--edge);
+  }
+
+  .panel{
+    flex:0 0 auto;
+    width:auto;
+    justify-content:center;
+    gap:14px;
+    max-height:calc(100vh - 140px);
+    scroll-snap-align:center;
+  }
+
+  .intro .board{width:min(78vw,900px)}
+  .essay .board{width:min(72vw,600px)}
+  .skills-panel .board{width:min(84vw,860px)}
+  .foot .board{width:min(76vw,680px)}
+
+  .essay .board > p:not(.sign){max-width:46ch}
+
+  /* фото — колонка справа от подзаголовка: шрифт тот же, что у .claim,
+     поэтому 24ch здесь равны его max-width и фото его не задевает */
+  .portrait{
+    font-family:var(--display);
+    font-variation-settings:"wdth" 87.5;
+    font-size:var(--t-l);
+    width:clamp(64px, calc(100% - 2 * var(--pad) - 24ch - 1.2em), 260px);
+    height:auto;
+    border-radius:clamp(8px,1.1vw,16px);
+  }
+  .claim{max-width:24ch}
+
+  /* кейсы: карточки встают в один ряд, лист тянется вдоль ленты.
+     ширина карточки зависит от высоты экрана — так лист всегда влезает по вертикали */
+  .works .board{width:auto}
+  .works-head{flex-direction:row;align-items:center;gap:24px}
+  .cards{
+    --cw:clamp(220px, calc((100vh - 560px) * 4 / 3), 360px);
+    grid-auto-flow:column;
+    grid-template-columns:none;
+    grid-auto-columns:var(--cw);
+    gap:clamp(20px,2vw,32px);
+  }
+  .card .note{
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:3;
+    overflow:hidden;
+  }
+
+  .mark{display:block}
+
+  .scrub{
+    left:var(--edge);
+    right:var(--edge);
+    bottom:26px;
+    padding:0;
+    gap:18px;
+    background:none;
+  }
+}
+
+/* невысокие экраны: описание в карточке — две строки, чтобы лист влез по высоте */
+@media (min-width:960px) and (orientation:landscape) and (max-height:760px){
+  .card .note{-webkit-line-clamp:2}
+}
+
+/* прилипание к листам — только для свайпа пальцем.
+   с мышью оно возвращало ленту назад после каждого щелчка колеса */
+@media (min-width:960px) and (orientation:landscape) and (pointer:coarse){
+  .stage{scroll-snap-type:x proximity}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+}
